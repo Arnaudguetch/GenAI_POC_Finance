@@ -53,6 +53,6 @@ Le but est de faire un **mini tableau de board intéractif** ou :
     |                   - Requirements
 
   > Dans le répo, nous avons 3 branches :
-    >    - Develop-branch : branche de développement, on y trouvera tout ce qui est code et autres
-    >    - Test-branch : branche de test, pour tester les différents codes développer au préalable
-    >    - Master : branche principal ou sera sauvegarder la version finale du POC
+  >   - Develop-branch : branche de développement, on y trouvera tout ce qui est code et autres
+  >   - Test-branch : branche de test, pour tester les différents codes développer au préalable
+  >   - Master : branche principal ou sera sauvegarder la version finale du POC
