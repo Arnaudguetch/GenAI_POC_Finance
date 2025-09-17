@@ -8,7 +8,7 @@ RUN pip install --upgrade pip && \
 
 COPY . . 
 
-COPY entrypoint.sh /source/entrypoint.sh
+COPY source/entrypoint.sh /source/entrypoint.sh
 RUN chmod +x /source/entrypoint.sh 
 
 CMD [ "/source/entrypoint.sh" ]
