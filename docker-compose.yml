@@ -20,8 +20,8 @@ services:
 
   source: 
     build:
-      context: ./source
-      dockerfile: ../dockerfile/Dockerfile
+      context: .
+      dockerfile: dockerfile/Dockerfile
     container_name: GenAI_POC_Finance
     ports:
       - "8501:8501"
