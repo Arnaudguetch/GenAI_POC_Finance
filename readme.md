@@ -27,10 +27,21 @@
         - Analyse prédictive via ML pour le risque de défaut
         - Génération de rapports automatisé en langue naturel
   
-## 3 - Proposition de POC combiné
+## 3 - Proposition de POC combiné : Pratique
     > Le but est de faire est de faire un **mini tableau de board intéractif** ou :
         - L'utilisateur renseigne des informations clients et bancaires.
         - GenAI propose :
             1. Décision d'octroi et justification
             2. Analyse de fragilité bancaire avec recommandations
         - **Technologies :** Python + Streamlit + modéles GPT pour la génération de texte et ML pour le scoring.
+
+
+    |- GenAI_POC_Finance/
+    |                   - main.py
+    |                   - Dockerfile
+    |                   - Docker-compose
+    |                   - GithubActions
+    |                   - Jenkins
+    |                   - TestUnitaires
+    |                   - Mlflow
+    |                   - Requirements
