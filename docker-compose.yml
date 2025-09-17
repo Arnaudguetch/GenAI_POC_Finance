@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  source: 
+    build:
+      context: ./source
+      dockerfile: ../dockerfile/Dockerfile
+    container_name: GenAI_POC_Finance
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./source:/source
+      - ./data:/source/data
+    environment:
+      - DATABASE_PATH=/source/data/database.db 
+    restart: always 
+  jenkins:
+    image: jenkins/jenkins:lts 
+    container_name: GenAI_Jenkins
+    ports:
+      - "8888:8080"
+    environment:
+      - JENKINS_ADMIN_ID=admin 
+      - JENKINS_ADMIN_PASSWORD=admin 
+    volumes:
+      - ./jenkins:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+  
+  mlflow:
+    image: mlflow/mlflow
+    container_name: GenAI_MLFLOW
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./Mlflow:/mlflow
+    restart: always
+
+  data:
+    image: alpine
+    container_name: GenAI_Data
+    volumes:
+      - ./data:/data
+    command: tail -f /dev/null
+
+     

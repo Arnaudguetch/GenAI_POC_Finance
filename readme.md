@@ -43,6 +43,7 @@ Le but est de faire un **mini tableau de board intéractif** ou :
     |                   - source/
     |                            - main.py
     |                            - app.py
+    |                            - entrypoint.sh
     |                   - dockerfile/
     |                            - Dockerfile
     |                   - Docker-compose
