@@ -14,6 +14,7 @@ services:
     environment:
       - DATABASE_PATH=/source/data/database.db 
     restart: always 
+    
   jenkins:
     image: jenkins/jenkins:lts 
     container_name: GenAI_Jenkins
@@ -25,6 +26,9 @@ services:
     volumes:
       - ./jenkins:/var/jenkins_home
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./dockerfile:/dockerfile
+      - ./source:/source
+      - ./data:/source/data
     restart: always
   
   mlflow:
