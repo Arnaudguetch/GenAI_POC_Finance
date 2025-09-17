@@ -2,13 +2,13 @@ import streamlit as st
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
-import openai
+from openai import OpenAI
 
 from main import generate_client_data, save_data, train_model, prediction_client, stress_test
 from dotenv import load_dotenv
 
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 data = generate_client_data()
 save_data(data)
@@ -66,14 +66,13 @@ principaux et commente l'impact des scénarios des stress suivants :
 
 if st.button("Géneré analyse"):
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}],
-            temperature = 0.7
+            temperature=0.7
         )
-        
+       
         st.markdown(response.choices[0].message.content)
     except Exception as e:
         st.error(f"Erreur OpenAI : {e}")
 
- 

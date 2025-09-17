@@ -2,3 +2,7 @@
 .history/*
 .mypy_cache/*
 .env
+__pycache__
+jenkins/*
+
+!jenkins/Jenkinsfile

@@ -15,7 +15,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./dockerfile:/dockerfile
       - ./source:/source
-      - ./data:/source/data
+      - ./data:/data
     restart: always
 
   source: 
@@ -27,9 +27,11 @@ services:
       - "8501:8501"
     volumes:
       - ./source:/source
-      - ./data:/source/data
+      - ./data:/data
+    env_file:
+      - ./.env
     environment:
-      - DATABASE_PATH=/source/data/database.db 
+      - DATABASE_PATH=/data/database.db 
     restart: always 
   
   mlflow:
@@ -48,4 +50,4 @@ services:
       - ./data:/data
     command: tail -f /dev/null
 
-     
+   
