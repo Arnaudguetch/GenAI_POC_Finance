@@ -2,6 +2,8 @@
 
 set -e
 
+set -x
+
 echo "Lancement du script ML (main.py)..."
 python3 main.py
 

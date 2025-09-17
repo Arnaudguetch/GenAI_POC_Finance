@@ -1,20 +1,7 @@
 version: "3.9"
 
 services:
-  source: 
-    build:
-      context: ./source
-      dockerfile: ../dockerfile/Dockerfile
-    container_name: GenAI_POC_Finance
-    ports:
-      - "8501:8501"
-    volumes:
-      - ./source:/source
-      - ./data:/source/data
-    environment:
-      - DATABASE_PATH=/source/data/database.db 
-    restart: always 
-    
+
   jenkins:
     image: jenkins/jenkins:lts 
     container_name: GenAI_Jenkins
@@ -30,9 +17,23 @@ services:
       - ./source:/source
       - ./data:/source/data
     restart: always
+
+  source: 
+    build:
+      context: ./source
+      dockerfile: ../dockerfile/Dockerfile
+    container_name: GenAI_POC_Finance
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./source:/source
+      - ./data:/source/data
+    environment:
+      - DATABASE_PATH=/source/data/database.db 
+    restart: always 
   
   mlflow:
-    image: mlflow/mlflow
+    image: ghcr.io/mlflow/mlflow
     container_name: GenAI_MLFLOW
     ports:
       - "8080:8080"
