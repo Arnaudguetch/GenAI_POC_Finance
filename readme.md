@@ -42,13 +42,15 @@ Le but est de faire un **mini tableau de board intéractif** ou :
     |- GenAI_POC_Finance/
     |                   - source/
     |                            - main.py
+    |                            - app.py
+    |                            - entrypoint.sh
     |                   - dockerfile/
     |                            - Dockerfile
-    |                            - Docker-compose
+    |                   - Docker-compose
     |                   - GithubActions
     |                   - jenkins/
     |                            - Jenkinsfile
-    |                   - TestUnitaires
+    |                   - Tests
     |                   - Mlflow
     |                   - Requirements
     |                   - data
