@@ -50,7 +50,8 @@ Le but est de faire un **mini tableau de board intéractif** ou :
     |                   - GithubActions
     |                   - jenkins/
     |                            - Jenkinsfile
-    |                   - Tests
+    |                   - Tests/
+    |                         - test_main.py
     |                   - Mlflow
     |                   - Requirements
     |                   - data
