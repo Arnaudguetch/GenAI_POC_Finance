@@ -3,7 +3,6 @@ pipeline {
     
     environment {
         DOCKER_COMPOSE = "docker-compose -f docker-compose.yml"
-        PYTHON = "python3"
         IMAGE_NAME = "genai_poc_finance_source"
     }
 
@@ -18,7 +17,7 @@ pipeline {
             steps {
                 script { 
                     echo "👉 Construction de l'image Docker pour source..."
-                    sh "docker build -t ${IMAGE_NAME} -f dockerfile/Dockerfile ."
+                    sh "docker build -t ${IMAGE_NAME} -f dockerfile/Dockerfile ./source"
                 }
             }
         }
@@ -26,9 +25,8 @@ pipeline {
         stage("Run ML from develop-branch") {
             steps {
                 script {
-                    echo "👉 Exécution de main.py depuis develop-branch..."
-                    sh "git checkout develop-branch"
-                    sh "${PYTHON} source/main.py"
+                    echo "Exécution de main.py depuis develop-branch..."
+                    sh "docker run --rm ${IMAGE_NAME}"
                 }
             }
         }
@@ -36,10 +34,8 @@ pipeline {
         stage("Unit Tests from test-branch") {
             steps {
                 script {
-                    echo "👉 Lancement des tests unitaires depuis test-branch..."
-                    sh "git fetch origin test-branch:test-branch"
-                    sh "git checkout test-branch"
-                    sh "pytest tests/test_main.py --maxfail=1 --disable-warnings -q"
+                    echo "Lancement des tests unitaires depuis test-branch..."
+                    sh "docker run --rm -v \$(pwd)/tests:/source/tests ${IMAGE_NAME} pytest tests/test_main.py --maxfail=1 --disable-warnings -q"
                 }
             }
         }
@@ -47,9 +43,7 @@ pipeline {
         stage("Deploy to Master") {
             steps {
                 script {
-                    echo "👉 Déploiement sur master..."
-                    sh "git fetch origin master:master"
-                    sh "git checkout master"
+                    echo "Déploiement sur master..."
                     sh "${DOCKER_COMPOSE} down"
                     sh "${DOCKER_COMPOSE} up -d --build"
                 }
