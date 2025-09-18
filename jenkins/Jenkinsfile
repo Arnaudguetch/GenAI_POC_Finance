@@ -18,7 +18,7 @@ pipeline {
             steps {
                 script { 
                     echo "👉 Construction de l'image Docker pour source..."
-                    sh "docker build -t ${IMAGE_NAME} -f dockerfile/Dockerfile ./source"
+                    sh "docker build -t ${IMAGE_NAME} -f dockerfile/Dockerfile ."
                 }
             }
         }
@@ -27,7 +27,6 @@ pipeline {
             steps {
                 script {
                     echo "👉 Exécution de main.py depuis develop-branch..."
-                    sh "git fetch origin develop-branch:develop-branch"
                     sh "git checkout develop-branch"
                     sh "${PYTHON} source/main.py"
                 }
