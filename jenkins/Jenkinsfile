@@ -1,51 +1,63 @@
 pipeline {
     agent any
-    
+
     environment {
-        DOCKER_COMPOSE = "docker-compose -f docker-compose.yml"
-        IMAGE_NAME = "genai_poc_finance_source"
+        IMAGE_NAME = "genai_poc_finance"
     }
 
     stages {
-        stage("Checkout") {
+        stage("Checkout develop-branch") {
             steps {
-                checkout scm
+                script {
+                    echo "Checkout de develop-branch..."
+                    sh "git fetch origin develop-branch:develop-branch"
+                    sh "git checkout develop-branch"
+                }
             }
         }
 
-        stage("Build Docker Image (source)") {
+        stage("Build Docker Image") {
             steps {
-                script { 
-                    echo "👉 Construction de l'image Docker pour source..."
+                script {
+                    echo "Construction de l'image Docker..."
                     sh "docker build -t ${IMAGE_NAME} -f dockerfile/Dockerfile ."
                 }
             }
         }
 
-        stage("Run ML from develop-branch") {
+        stage("Run main.py") {
             steps {
                 script {
-                    echo "Exécution de main.py depuis develop-branch..."
-                    sh "docker run --rm ${IMAGE_NAME}"
+                    echo "Exécution de main.py..."
+                    sh "docker run --rm ${IMAGE_NAME} python3 /source/main.py"
                 }
             }
         }
 
-        stage("Unit Tests from test-branch") {
+        stage("Checkout test-branch") {
             steps {
                 script {
-                    echo "Lancement des tests unitaires depuis test-branch..."
+                    echo "Checkout de test-branch..."
+                    sh "git fetch origin test-branch:test-branch"
+                    sh "git checkout test-branch"
+                }
+            }
+        }
+
+        stage("Run Unit Tests") {
+            steps {
+                script {
+                    echo "Lancement des tests unitaires..."
                     sh "docker run --rm -v \$(pwd)/tests:/source/tests ${IMAGE_NAME} pytest tests/test_main.py --maxfail=1 --disable-warnings -q"
                 }
             }
         }
 
-        stage("Deploy to Master") {
+        stage("Deploy Streamlit App") {
             steps {
                 script {
-                    echo "Déploiement sur master..."
-                    sh "${DOCKER_COMPOSE} down"
-                    sh "${DOCKER_COMPOSE} up -d --build"
+                    echo "Déploiement de app.py (Streamlit)..."
+                    sh "docker run -d -p 8501:8501 ${IMAGE_NAME} streamlit run /source/app.py --server.port=8501 --server.address=0.0.0.0"
                 }
             }
         }
@@ -56,10 +68,10 @@ pipeline {
             echo "======== Pipeline terminé ========"
         }
         success {
-            echo "======== Pipeline exécuté avec succès ========"
+            echo "Pipeline exécuté avec succès!"
         }
         failure {
-            echo "======== Pipeline échoué ========"
+            echo "Pipeline échoué!"
         }
     }
 }
