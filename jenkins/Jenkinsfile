@@ -27,7 +27,6 @@ pipeline {
             steps {
                 script {
                     echo "👉 Exécution de main.py depuis develop-branch..."
-                    sh "git fetch origin develop-branch:develop-branch"
                     sh "git checkout develop-branch"
                     sh "${PYTHON} source/main.py"
                 }
