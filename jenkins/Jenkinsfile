@@ -50,8 +50,8 @@ pipeline{
         stage("Unit Tests from test-branch") { 
             when {
                 allOf {
-                    expression { env.CHANGE_TARGET == "master "}
-                    branch "PR-*"
+                    expression { env.CHANGE_TARGET == "master" }
+                    changeRequest()
                 }
             }
             steps {
