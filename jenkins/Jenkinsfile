@@ -1,62 +1,43 @@
-pipeline{
+pipeline {
     agent any
     
     environment {
         DOCKER_COMPOSE = "docker-compose -f docker-compose.yml"
         PYTHON = "python3"
-        IMAGE_NAME = "genai_poc_finance"
+        IMAGE_NAME = "genai_poc_finance_source"
     }
 
-    stages{
+    stages {
         stage("Checkout") {
-            steps{
+            steps {
                 checkout scm
             }
         }
+
         stage("Build Docker Image (source)") {
-            when {
-                allOf {
-                    expression { env.CHANGE_TARGET == "master"}
-                    branch "PR-*"
-                }
-            }
             steps {
                 script { 
-                    echo "Construction de l'image Docker pour source..."
-                    sh "docker build -t ${IMAGE_NAME} -F dockerfile/Dockerfile ./source"
+                    echo "👉 Construction de l'image Docker pour source..."
+                    sh "docker build -t ${IMAGE_NAME} -f dockerfile/Dockerfile ./source"
                 }
             }
         }
 
         stage("Run ML from develop-branch") {
-            when {
-                allof {
-                    // Cas PR -> master
-                    expression { env.CHANGE_TARGET == "master "}
-                    branch "PR-*"
-                }
-            }
             steps {
                 script {
-                    echo "Pull Resquest détectèe vers master !!"
-                    echo "Exécution de main.py depuis develop-branch..."
+                    echo "👉 Exécution de main.py depuis develop-branch..."
                     sh "git fetch origin develop-branch:develop-branch"
                     sh "git checkout develop-branch"
-                    sh "${python3} source/main.py"
+                    sh "${PYTHON} source/main.py"
                 }
             }
         }
 
-        stage("Unit Tests from test-branch") { 
-            when {
-                allof {
-                    expression { env.CHANGE_TARGET == "master "}
-                    branch "PR-*"
-                }
-            }
+        stage("Unit Tests from test-branch") {
             steps {
                 script {
-                    echo "Lancement des tests unitaires depuis test-branch !!"
+                    echo "👉 Lancement des tests unitaires depuis test-branch..."
                     sh "git fetch origin test-branch:test-branch"
                     sh "git checkout test-branch"
                     sh "pytest tests/test_main.py --maxfail=1 --disable-warnings -q"
@@ -64,13 +45,12 @@ pipeline{
             }
         }
 
-        stage("Deploy to Master") { 
-            when { 
-                branch "master"
-            }
+        stage("Deploy to Master") {
             steps {
                 script {
-                    echo "Déploiement de l'application via Docker Compose..."
+                    echo "👉 Déploiement sur master..."
+                    sh "git fetch origin master:master"
+                    sh "git checkout master"
                     sh "${DOCKER_COMPOSE} down"
                     sh "${DOCKER_COMPOSE} up -d --build"
                 }
@@ -79,14 +59,14 @@ pipeline{
     }
 
     post {
-        always{
+        always {
             echo "======== Pipeline terminé ========"
         }
-        success{
-            echo "======== pipeline executed successfully ========"
+        success {
+            echo "======== Pipeline exécuté avec succès ========"
         }
-        failure{
-            echo "======== pipeline execution failed ========"
+        failure {
+            echo "======== Pipeline échoué ========"
         }
     }
 }
