@@ -4,7 +4,7 @@ pipeline{
     environment {
         DOCKER_COMPOSE = "docker-compose -f docker-compose.yml"
         PYTHON = "python3"
-        IMAGE_NAME = "genai_poc_finance"
+        IMAGE_NAME = "genai_poc_finance_source"
     }
 
     stages{
@@ -16,23 +16,23 @@ pipeline{
         stage("Build Docker Image (source)") {
             when {
                 allOf {
-                    expression { env.CHANGE_TARGET == "master"}
+                    expression { env.CHANGE_TARGET == "master" }
                     branch "PR-*"
                 }
             }
             steps {
                 script { 
                     echo "Construction de l'image Docker pour source..."
-                    sh "docker build -t ${IMAGE_NAME} -F dockerfile/Dockerfile ./source"
+                    sh "docker build -t ${IMAGE_NAME} -f dockerfile/Dockerfile ./source"
                 }
             }
         }
 
         stage("Run ML from develop-branch") {
             when {
-                allof {
+                allOf {
                     // Cas PR -> master
-                    expression { env.CHANGE_TARGET == "master "}
+                    expression { env.CHANGE_TARGET == "master " }
                     branch "PR-*"
                 }
             }
@@ -42,14 +42,14 @@ pipeline{
                     echo "Exécution de main.py depuis develop-branch..."
                     sh "git fetch origin develop-branch:develop-branch"
                     sh "git checkout develop-branch"
-                    sh "${python3} source/main.py"
+                    sh "${PYTHON} source/main.py"
                 }
             }
         }
 
         stage("Unit Tests from test-branch") { 
             when {
-                allof {
+                allOf {
                     expression { env.CHANGE_TARGET == "master "}
                     branch "PR-*"
                 }
