@@ -17,7 +17,7 @@ pipeline {
             steps {
                 script { 
                     echo "👉 Construction de l'image Docker pour source..."
-                    sh "docker build -t ${IMAGE_NAME} -f dockerfile/Dockerfile ./source"
+                    sh "docker build -t ${IMAGE_NAME} -f dockerfile/Dockerfile ."
                 }
             }
         }
