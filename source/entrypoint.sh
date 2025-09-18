@@ -5,7 +5,7 @@ set -e
 set -x
 
 echo "Lancement du script ML (main.py)..."
-python3 /source/source/main.py
+python3 /source/main.py
 
 sleep 4
 
