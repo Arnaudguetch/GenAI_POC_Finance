@@ -17,7 +17,7 @@ pipeline{
             when {
                 allOf {
                     expression { env.CHANGE_TARGET == "master" }
-                    branch "PR-*"
+                    changeRequest()
                 }
             }
             steps {
@@ -32,8 +32,8 @@ pipeline{
             when {
                 allOf {
                     // Cas PR -> master
-                    expression { env.CHANGE_TARGET == "master " }
-                    branch "PR-*"
+                    expression { env.CHANGE_TARGET == "master" }
+                    changeRequest()
                 }
             }
             steps {
