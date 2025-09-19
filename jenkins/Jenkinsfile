@@ -63,8 +63,8 @@ pipeline {
                         git clone -b test-branch https://github.com/Arnaudguetch/GenAI_POC_Finance.git ${WORKSPACE}/test-branch
                         ls -l ${WORKSPACE}/test-branch
                         docker run --rm \\
-                            -v ${WORKSPACE}/test-branch/test-branch:/source \\
-                            -v ${WORKSPACE}/test-branch/test-branch/data:/data \\
+                            -v ${WORKSPACE}/test-branch:/source \\
+                            -v ${WORKSPACE}/test-branch/data:/data \\
                             genai_poc_finance bash -lc 'export PYTHONPATH=/source && pytest tests/test_main.py --maxfail=1 --disable-warnings -q'
                     """
                 }
