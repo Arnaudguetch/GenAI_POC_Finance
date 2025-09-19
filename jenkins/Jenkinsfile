@@ -57,8 +57,7 @@ pipeline {
             steps {
                 script {
                     echo "Lancement des tests unitaires depuis test-branch..."
-                    sh "git fetch origin test-branch:test-branch"
-                    sh "git checkout test-branch"
+                    sh "git clone -b test-branch https://github.com/Arnaudguetch/GenAI_POC_Finance.git /tmp/test-branch"
                     sh "docker run --rm -v \$(pwd):/source -v \$(pwd)/data:/data ${IMAGE_NAME} bash -lc 'cd /source && pytest tests/test_main.py --maxfail=1 --disable-warnings -q'"
                 }
             }
@@ -67,7 +66,7 @@ pipeline {
         stage("Deploy Streamlit App (detached)") {
             steps {
                 script {
-                    echo "🌐 Déploiement Streamlit (démarrage détaché)"
+                    echo "Déploiement Streamlit (démarrage détaché)"
                     sh '''
                       docker rm -f ${STREAMLIT_CONTAINER} 2>/dev/null || true
 
