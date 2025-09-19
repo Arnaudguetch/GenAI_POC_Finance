@@ -6,8 +6,10 @@ from source.main import generate_client_data, save_data, train_model, prediction
 def test_generate_client_data_shape():
     
     data = generate_client_data(50)
-    assert data.sharpe[0] == 50
-    assert "octroi" in data.columns
+    assert data.shape == (50, 5)
+    expected_columns = ["revenu_mensuel", "age", "historique_defaut", "montant_demande", "octroi"]
+    for col in expected_columns:
+        assert col in data.columns
     
 def test_generate_client_data_logic():
     
@@ -56,3 +58,5 @@ def test_stress_test_effect():
     factors, results = stress_test(model_octroi, scaler, client, revenu=5000, montant_demande=1000)
     assert len(factors) == len(results) == 3
     assert all(0 <= p <= 1 for p in results)
+    
+    
