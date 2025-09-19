@@ -64,8 +64,7 @@ pipeline {
                     docker run --rm \
                     -v /tmp/test-branch:/source \
                     -v /tmp/test-branch/data:/data \
-                    ${IMAGE_NAME} \
-                    bash -lc 'if [ -d /source/tests ]; then cd /source && pytest tests/test_main.py --maxfail=1 --disable-warnings -q; else echo "Tests folder not found"; exit 1; fi'
+                    genai_poc_finance bash -lc 'export PYTHONPATH=/source && pytest tests/test_main.py --maxfail=1 --disable-warnings -q'
                     """
                 }
             }
