@@ -57,6 +57,7 @@ pipeline {
             steps {
                 script {
                     echo "Lancement des tests unitaires depuis test-branch..."
+                    sh "rm -rf /tmp/test-branch"
                     sh "git clone -b test-branch https://github.com/Arnaudguetch/GenAI_POC_Finance.git /tmp/test-branch"
                     sh "docker run --rm -v \$(pwd):/source -v \$(pwd)/data:/data ${IMAGE_NAME} bash -lc 'cd /source && pytest tests/test_main.py --maxfail=1 --disable-warnings -q'"
                 }
@@ -85,10 +86,10 @@ pipeline {
             echo "======== Pipeline terminé ========"
         }
         success {
-            echo "Pipeline exécuté avec succès!"
+            echo "======== Pipeline exécuté avec succès! ========="
         }
         failure {
-            echo "Pipeline échoué!"
+            echo "======== Pipeline échoué! ========="
         }
     }
 }
