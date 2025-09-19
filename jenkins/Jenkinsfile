@@ -56,11 +56,10 @@ pipeline {
         stage("Run Unit Tests (using test-branch code)") {
             steps {
                 script {
-                    echo "Lancement des tests unitaires (on monte le workspace pour utiliser le code de test-branch)"
-                    sh '''
-                      docker run --rm -v ${WORKSPACE}:/source -v ${WORKSPACE}/data:/data ${IMAGE_NAME} \
-                        bash -lc "cd /source && pytest tests/test_main.py --maxfail=1 --disable-warnings -q"
-                    '''
+                    echo "Lancement des tests unitaires depuis test-branch..."
+                    sh "git fetch origin test-branch:test-branch"
+                    sh "git checkout test-branch"
+                    sh "docker run --rm -v \$(pwd):/source -v \$(pwd)/data:/data ${IMAGE_NAME} bash -lc 'cd /source && pytest tests/test_main.py --maxfail=1 --disable-warnings -q'"
                 }
             }
         }
