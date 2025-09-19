@@ -5,7 +5,7 @@ pipeline {
         IMAGE_NAME = "genai_poc_finance"
         STREAMLIT_CONTAINER = "streamlit_app"
         DATA_HOST_PATH = "${WORKSPACE}/data"
-        HOST_PORT="8502"
+
     }
 
     stages {
@@ -83,6 +83,11 @@ pipeline {
                       HOST_PORT=8501
 
                       docker rm -f ${STREAMLIT_CONTAINER} 2>/dev/null || true
+
+                      EXISTING=$(docker ps --filter "publish=$HOST_PORT" --format "{{.ID}}")
+                      if [ ! -z "$EXISTING" ]; then
+                          docker rm -f $EXISTING
+                      fi
 
                       docker run -d --name ${STREAMLIT_CONTAINER} -p $HOST_PORT:8501 \
                         -v ${WORKSPACE}:/source \
