@@ -54,7 +54,7 @@ services:
     image: ghcr.io/mlflow/mlflow
     container_name: GenAI_MLFLOW
     ports:
-      - "8082:8080"
+      - "8083:8082"
     volumes:
       - ./Mlflow:/mlflow
     restart: always
