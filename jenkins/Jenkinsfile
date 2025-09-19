@@ -90,10 +90,8 @@ pipeline {
                       fi
 
                       docker run -d --name ${STREAMLIT_CONTAINER} -p $HOST_PORT:8501 \
-                        -v ${WORKSPACE}:/source \
                         -v ${WORKSPACE}/data:/data \
-                        ${IMAGE_NAME} \
-                        bash -lc "streamlit run /source/app.py --server.port=8501 --server.address=0.0.0.0"
+                        ${IMAGE_NAME} 
 
                       echo "Streamlit accessible sur le port $HOST_PORT"
                     '''
