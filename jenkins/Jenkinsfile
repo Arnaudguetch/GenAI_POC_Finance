@@ -77,6 +77,11 @@ pipeline {
                     sh '''
                       docker rm -f ${STREAMLIT_CONTAINER} 2>/dev/null || true
 
+                      PORT_IN_USE=$(docker ps --filter "publish=8501" --format "{{.ID}}")
+                      if [ ! -z "$PORT_IN_USE" ]; then
+                        docker rm -f $PORT_IN_USE
+                      fi
+
                       docker run -d --name ${STREAMLIT_CONTAINER} -p 8501:8501 \
                         -v ${WORKSPACE}:/source -v ${WORKSPACE}/data:/data \
                         ${IMAGE_NAME} \
