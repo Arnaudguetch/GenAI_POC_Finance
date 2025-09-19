@@ -77,15 +77,18 @@ pipeline {
                     sh '''
                       docker rm -f ${STREAMLIT_CONTAINER} 2>/dev/null || true
 
-                      PORT_IN_USE=$(docker ps --filter "publish=8501" --format "{{.ID}}")
+                      PORT_IN_USE=$(docker ps --filter "publish=${HOST_PORT}" --format "{{.ID}}")
                       if [ ! -z "$PORT_IN_USE" ]; then
                         docker rm -f $PORT_IN_USE
                       fi
 
-                      docker run -d --name ${STREAMLIT_CONTAINER} -p 8501:8501 \
-                        -v ${WORKSPACE}:/source -v ${WORKSPACE}/data:/data \
+                      docker run -d --name ${STREAMLIT_CONTAINER} -p ${HOST_PORT}:8501 \
+                        -v ${WORKSPACE}:/source \
+                        -v ${WORKSPACE}/data:/data \
                         ${IMAGE_NAME} \
                         bash -lc "streamlit run /source/app.py --server.port=8501 --server.address=0.0.0.0"
+
+                      echo "Streamlit accessible sur le port ${HOST_PORT}"
                     '''
                 }
             }
