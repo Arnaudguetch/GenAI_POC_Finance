@@ -76,12 +76,11 @@ pipeline {
                 script {
                     echo "Déploiement Streamlit (démarrage détaché)"
                     sh '''
-                      docker rm -f ${STREAMLIT_CONTAINER} 2>/dev/null || true
+                      STREAMLIT_CONTAINER=streamlit_app
+                      IMAGE_NAME=genai_poc_finance
+                      HOST_PORT=8501
 
-                      PORT_IN_USE=$(docker ps --filter "publish=$HOST_PORT" --format "{{.ID}}")
-                      if [ ! -z "$PORT_IN_USE" ]; then
-                        docker rm -f $PORT_IN_USE
-                      fi
+                      docker rm -f ${STREAMLIT_CONTAINER} 2>/dev/null || true
 
                       docker run -d --name ${STREAMLIT_CONTAINER} -p $HOST_PORT:8501 \
                         -v ${WORKSPACE}:/source \
