@@ -5,6 +5,7 @@ pipeline {
         IMAGE_NAME = "genai_poc_finance"
         STREAMLIT_CONTAINER = "streamlit_app"
         DATA_HOST_PATH = "${WORKSPACE}/data"
+        HOST_PORT=8501
     }
 
     stages {
@@ -88,7 +89,7 @@ pipeline {
                         ${IMAGE_NAME} \
                         bash -lc "streamlit run /source/app.py --server.port=8501 --server.address=0.0.0.0"
 
-                      echo "Streamlit accessible sur le port ${HOST_PORT}"
+                      echo "Streamlit accessible sur le port $HOST_PORT"
                     '''
                 }
             }
