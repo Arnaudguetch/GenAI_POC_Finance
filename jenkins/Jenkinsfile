@@ -5,7 +5,7 @@ pipeline {
         IMAGE_NAME = "genai_poc_finance"
         STREAMLIT_CONTAINER = "streamlit_app"
         DATA_HOST_PATH = "${WORKSPACE}/data"
-        HOST_PORT="8501"
+        HOST_PORT="8502"
     }
 
     stages {
