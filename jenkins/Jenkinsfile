@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "genai_poc_finance"
+        IMAGE_NAME = "GenAI_App"
         STREAMLIT_CONTAINER = "streamlit_app"
         DATA_HOST_PATH = "${WORKSPACE}/data"
 
@@ -79,7 +79,7 @@ pipeline {
                     echo "Déploiement Streamlit (démarrage détaché)"
                     sh '''
                       STREAMLIT_CONTAINER=streamlit_app
-                      IMAGE_NAME=genai_poc_finance
+                      IMAGE_NAME=GenAI_App
                       HOST_PORT=8501
 
                       docker rm -f ${STREAMLIT_CONTAINER} 2>/dev/null || true
