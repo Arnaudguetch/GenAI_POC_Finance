@@ -65,7 +65,9 @@ pipeline {
                         docker run --rm \\
                             -v ${WORKSPACE}/test-branch:/source \\
                             -v ${WORKSPACE}/test-branch/data:/data \\
-                            genai_poc_finance bash -lc 'export PYTHONPATH=/source && pytest tests/test_main.py --maxfail=1 --disable-warnings -q'
+                            -w /source \\
+                            genai_poc_finance \\
+                            bash -lc 'export PYTHONPATH=/source && pytest tests/test_main.py --maxfail=1 --disable-warnings -q'
                     """
                 }
             }
