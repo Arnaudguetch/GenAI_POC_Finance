@@ -3,15 +3,19 @@ pipeline {
 
     environment {
         IMAGE_NAME = "genai_poc_finance"
+        STREAMLIT_CONTAINER = "streamlit_app"
+        DATA_HOST_PATH = "${WORKSPACE}/data"
     }
 
     stages {
         stage("Checkout develop-branch") {
             steps {
                 script {
-                    echo "Checkout de develop-branch..."
-                    sh "git fetch origin develop-branch:develop-branch"
-                    sh "git checkout develop-branch"
+                    echo "Checkout develop-branch"
+                    sh '''
+                      git fetch origin develop-branch
+                      git checkout -B develop-branch origin/develop-branch
+                    '''
                 }
             }
         }
@@ -19,17 +23,20 @@ pipeline {
         stage("Build Docker Image") {
             steps {
                 script {
-                    echo "Construction de l'image Docker..."
-                    sh "docker build -t ${IMAGE_NAME} -f dockerfile/Dockerfile ."
+                    echo "Build image Docker (contexte = racine)"
+                    sh 'docker build -t ${IMAGE_NAME} -f dockerfile/Dockerfile .'
                 }
             }
         }
 
-        stage("Run main.py") {
+        stage("Run main.py (ML)") {
             steps {
                 script {
-                    echo "Exécution de main.py..."
-                    sh "docker run --rm ${IMAGE_NAME} python3 /source/main.py"
+                    echo "Exécution de main.py dans un conteneur (avec /data monté)"
+                    sh '''
+                      mkdir -p ${WORKSPACE}/data
+                      docker run --rm -v ${WORKSPACE}/data:/data ${IMAGE_NAME} python3 /source/main.py
+                    '''
                 }
             }
         }
@@ -37,27 +44,39 @@ pipeline {
         stage("Checkout test-branch") {
             steps {
                 script {
-                    echo "Checkout de test-branch..."
-                    sh "git fetch origin test-branch:test-branch"
-                    sh "git checkout test-branch"
+                    echo "Checkout test-branch"
+                    sh '''
+                      git fetch origin test-branch
+                      git checkout -B test-branch origin/test-branch
+                    '''
                 }
             }
         }
 
-        stage("Run Unit Tests") {
+        stage("Run Unit Tests (using test-branch code)") {
             steps {
                 script {
-                    echo "Lancement des tests unitaires..."
-                    sh "docker run --rm -v \$(pwd)/tests:/source/tests ${IMAGE_NAME} pytest tests/test_main.py --maxfail=1 --disable-warnings -q"
+                    echo "Lancement des tests unitaires (on monte le workspace pour utiliser le code de test-branch)"
+                    sh '''
+                      docker run --rm -v ${WORKSPACE}:/source -v ${WORKSPACE}/data:/data ${IMAGE_NAME} \
+                        bash -lc "cd /source && pytest tests/test_main.py --maxfail=1 --disable-warnings -q"
+                    '''
                 }
             }
         }
 
-        stage("Deploy Streamlit App") {
+        stage("Deploy Streamlit App (detached)") {
             steps {
                 script {
-                    echo "Déploiement de app.py (Streamlit)..."
-                    sh "docker run -d -p 8501:8501 ${IMAGE_NAME} streamlit run /source/app.py --server.port=8501 --server.address=0.0.0.0"
+                    echo "🌐 Déploiement Streamlit (démarrage détaché)"
+                    sh '''
+                      docker rm -f ${STREAMLIT_CONTAINER} 2>/dev/null || true
+
+                      docker run -d --name ${STREAMLIT_CONTAINER} -p 8501:8501 \
+                        -v ${WORKSPACE}:/source -v ${WORKSPACE}/data:/data \
+                        ${IMAGE_NAME} \
+                        bash -lc "streamlit run /source/app.py --server.port=8501 --server.address=0.0.0.0"
+                    '''
                 }
             }
         }
