@@ -19,10 +19,10 @@ def generate_client_data(n=100):
     
     data["octroi"] = (data["revenu_mensuel"] > 4000) &(data["historique_defaut"] == 0)
     data["octroi"] = data["octroi"].astype(int)
-   
+  
     return data 
 
-def save_data(data, path="data/clients.csv"):
+def save_data(data, path="/data/clients.csv"):
     
     os.makedirs(os.path.dirname(path), exist_ok=True)
     data.to_csv(path, index=False)
