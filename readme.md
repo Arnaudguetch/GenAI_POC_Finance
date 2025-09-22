@@ -62,7 +62,7 @@ Le but est de faire un **mini tableau de board intéractif** ou :
   >   - **Test-branch :** branche de test, pour tester les différents codes développer au préalable
   >   - **Master :** branche principal ou sera sauvegarder la version finale du POC
 
-##### a-) Diagramme d'utilisation :
+#### a-) Diagramme d'utilisation :
 
 ```mermaid
 mindmap
@@ -85,11 +85,11 @@ mindmap
             Sql
             Grovy
 ```  
-##### b-) Etapes pour lancer le projet
+#### b-) Etapes pour lancer le projet
 
 > Veuillez cliquer sur ce [**document**](https://markdownlivepreview.com/) 
  pour suivre les étapes de démarrage et visualisation du projet
-##### c-) Références : 
+#### c-) Références : 
 
 > Je me suis inspiré à partir de ces **documents**, des **vidéos youtube** et mes connaisances sur la finance acquis lors de mon passage à travers un stage à la **Société Générale**; Tout ceux-ci m'ont permis de réaliser ce POC. Ces différents documents sont reférencés à travers ces liens : 
 > 1. [Recommandations pour la détection et le traitement des banques fragiles](https://www.bis.org/bcbs/publ/d330_fr.pdf?utm_source=chatgpt.com).
