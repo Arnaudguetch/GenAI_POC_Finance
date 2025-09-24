@@ -54,7 +54,9 @@ Le but est de faire un **mini tableau de board intéractif** ou :
     |                         - test_main.py
     |                   - Mlflow
     |                   - Requirements
-    |                   - data
+    |                   - data/
+    |                         - backup/
+    |                         - database.db
     |                   - sqlite
 
   > Dans le répo, nous avons 3 branches :
