@@ -71,4 +71,3 @@ def stress_test(model_octroi, scaler, client_input, revenu, montant_demande):
     return stress_factors, stress_results
         
 
- 
