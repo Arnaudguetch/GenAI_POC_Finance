@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import numpy as np
 import pytest
 from source.main import generate_client_data, save_data, train_model, prediction_client, stress_test
 
@@ -20,43 +21,81 @@ def test_generate_client_data_logic():
         else:
             assert row["octroi"] == 0
             
+def test_generate_client_data_values():
+    data = generate_client_data(10)
+    assert data["revenu_mensuel"].between(2000, 10000).all()
+    assert data["age"].between(18, 70).all()
+    assert data["historique_defaut"].isin([0, 1]).all()
+    assert data["montant_demande"].between(1000, 50000).all()
+    assert data["octroi"].isin([0, 1]).all()
+            
 def test_save_data(tmp_path):
     
     data = generate_client_data(20)
     file_path = tmp_path/"clients.csv"
     save_data(data, path=file_path)
     assert os.path.exists(file_path)
-            
-def test_train_and_predict():
+ 
+@pytest.fixture(scope="source.main")           
+def trained_model():
     
-    data = generate_client_data(100)
+    data = generate_client_data(200)
     model_octroi, scaler = train_model(data)
-    client = pd.DataFrame({
+    client = pd.DataFrame([{
         
-        "revenu_mensuel":[5000],
-        "age":[30],
-        "historique_defaut":[0],
-        "montant_demande":[10000]
-    })
+        "revenu_mensuel":5000,
+        "age":30,
+        "historique_defaut":0,
+        "montant_demande":10000
+    }])
+    return model_octroi, scaler, client
+
+def test_train_model_ouput(trained_model):
     
+    model_octroi, scaler, _ = trained_model
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.preprocessing import StandardScaler
+    
+    assert isinstance(model_octroi, RandomForestClassifier)
+    assert isinstance(scaler, StandardScaler)
+    
+def test_prediction_client(trained_model):
+    
+    model_octroi, scaler, client = trained_model
     decision, proba = prediction_client(model_octroi, scaler, client)
     assert decision in [0, 1]
-    assert 0 <= proba <= 1
+    assert 0.0 <= proba <= 1.0
     
-def test_stress_test_effect():
+def test_stress_test_structure(trained_model):
     
-    data = generate_client_data(100)
-    model_octroi, scaler = train_model(data)
-    client = pd.DataFrame({
-        
-       "revenu_mensuel":[5000],
-        "age":[30],
-        "historique_defaut":[0],
-        "montant_demande":[10000]
-    })
+    model_octroi, scaler, client_input = trained_model
+    revenu = client_input["revenu_mensuel"].iloc[0]
+    montant = client_input["montant_demande"].iloc[0]
     
-    factors, results = stress_test(model_octroi, scaler, client, revenu=5000, montant_demande=1000)
-    assert len(factors) == len(results) == 3
-    assert all(0 <= p <= 1 for p in results)
+    factors, results = stress_test(model_octroi, scaler, client_input.copy(), revenu, montant)
+    assert isinstance(factors, list)
+    assert isinstance(results, list)
+    assert len(factors) == len(results)
+    assert all(isinstance(f, str) for f in factors)
+    assert all(isinstance(r, (float, int, np.floating)) for r in results)
+    
+def test_stress_test_probability_range(trained_model):
+    
+    model_octroi, scaler, client_input = trained_model
+    revenu = client_input["revenu_mensuel"].iloc[0]
+    montant = client_input["montant_demande"].iloc[0]
+    
+    _, results = stress_test(model_octroi, scaler, client_input.copy(), revenu, montant)
+    assert all(0.0 <= r <= 1.0 for r in results)
+    
+def test_stress_test_effect(trained_model):
+    
+    model_octroi, scaler, client_input = trained_model
+    revenu = client_input["revenu_mensuel"].iloc[0]
+    montant = client_input["montant_demande"].iloc[0]
+    
+    baseline_proba = prediction_client(model_octroi, scaler, client_input)[1]
+    _, results = stress_test(model_octroi, scaler, client_input.copy(), revenu, montant)
+    assert any(abs(r - baseline_proba) > 1e-6 for r in results)
     
     
