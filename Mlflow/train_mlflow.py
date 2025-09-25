@@ -14,12 +14,10 @@ if __name__ == "__main__":
         
         data = generate_client_data(500)
         data_path = save_data(data)
-        
-        n_estimators = 150
-        model, scaler, accuracy = train_model(data, n_estimators=n_estimators)
-        
-        mlflow.log_param("model_type", "RandomForestClassifier")
         mlflow.log_param("n_samples", len(data))
+    
+        model, scaler, accuracy = train_model(data)
+        mlflow.log_param("model_type", "RandomForestClassifier")
         mlflow.log_metric("accuracy", accuracy)
 
         client_input = pd.DataFrame([{
