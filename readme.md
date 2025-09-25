@@ -89,7 +89,7 @@ mindmap
 ```  
 #### b-) Etapes pour lancer le projet
 
-> Veuillez cliquer sur ce [**document**](https://markdownlivepreview.com/) 
+> Veuillez cliquer sur ce [**document**](https://github.com/Arnaudguetch/GenAI_POC_Finance/wiki) 
  pour suivre les étapes de démarrage et visualisation du projet
 #### c-) Références : 
 
