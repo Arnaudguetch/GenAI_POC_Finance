@@ -2,7 +2,4 @@ Erreur : le dossier source ./data n'existe pas.
 
 ======= Sauvegarde terminée dans le dossier : ./data/backup ========
 Fichiers copiés : []
-Traceback (most recent call last):
-  File "/data/save_files.py", line 66, in <module>
-    p
-NameError: name 'p' is not defined
+Erreur : le dossier source ./data n'existe pas.

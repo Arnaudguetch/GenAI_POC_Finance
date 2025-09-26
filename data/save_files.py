@@ -3,7 +3,7 @@ from datetime import date
 import shutil 
 
 
-def save_csv_files(src="./data", dst="./data/backup"):
+def save_csv_files(src="/data", dst="/data/backup"):
     
     
     if not os.path.exists(src):
@@ -33,7 +33,7 @@ def save_csv_files(src="./data", dst="./data/backup"):
 
 
 
-def delete_csv_files(src="./data", files_to_delete=None):
+def delete_csv_files(src="/data", files_to_delete=None):
    
    
     if not os.path.exists(src):
@@ -56,8 +56,8 @@ def delete_csv_files(src="./data", files_to_delete=None):
         
 
 
-source_path = "./data"         
-backup_dir = "./data/backup" 
+source_path = "/data"         
+backup_dir = "/data/backup" 
 
 backup_path, copied_files = save_csv_files(source_path, backup_dir)
 
