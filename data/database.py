@@ -1,6 +1,70 @@
+from sqlite3 import connect
 import os 
-import time 
-import shutil
+import csv 
+
+if os.environ.get("DOCKER"):
+    path_src = "/data/backup"
+else:
+    path_src = os.path.join(os.path.dirname(__file__), "backup")
+
+"""print("=== Debug database.py ===")
+print("Contenu de /data/backup :")
+print(os.listdir(path_src) if os.path.exists(path_src) else "Dossier inexistant")
+print("=========================")"""
 
 
-path = "/data"
+def load_file(path):
+
+    file = [ ]
+    for files in os.listdir(path):
+        if os.path.isfile(os.path.join(path, files)):
+            file.append(files)
+    
+    if not file:
+        raise FileNotFoundError("Error aucun fichier trouvé dans le dossier backup")
+
+    dernier_fichier = max(file, key=lambda files: os.path.getmtime(os.path.join(path, files)))
+
+    return dernier_fichier
+
+def connect_data(filename):
+    
+    table_name = os.path.splitext(filename)[0]
+    db_name = table_name + ".db"
+    
+    csv_path = os.path.join(path_src, filename)
+    with open(csv_path, "r", encoding="utf-8") as f:
+        reader = csv.reader(f)
+        headers = next(reader)
+        rows = list(reader)
+        
+    connection = connect(db_name)
+    cursor = connection.cursor()
+   
+    
+    columns = ", ".join([f'"{col}" TEXT' for col in headers])
+    cursor.execute(f'CREATE TABLE IF NOT EXISTS "{table_name}" ({columns})')
+    
+    insert_data = ", ".join(["?"] * len(headers))
+    cursor.executemany(
+        f'INSERT INTO "{table_name}" VALUES ({insert_data})',
+        rows
+    )
+    connection.commit()
+    
+    cursor.execute(f'SELECT * FROM "{table_name}" LIMIT 5')
+    preview = cursor.fetchall()
+    connection.close()
+    print(f" ======== Base de Données {db_name} prete avec la table {table_name} ======== ")
+    print("Aperçu des données importées :")
+    
+    for row in preview:
+        print(row)
+        
+    return db_name, table_name
+    
+data = load_file(path_src)
+db = connect_data(data)
+
+print(f" ======== Base de Données {db} prete ======== ")
+

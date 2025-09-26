@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
 import os
 
 
@@ -26,7 +28,7 @@ def save_data(data, path="/data/clients.csv"):
     
     os.makedirs(os.path.dirname(path), exist_ok=True)
     data.to_csv(path, index=False)
-    
+   
     return path
 
 def train_model(data):
@@ -34,13 +36,19 @@ def train_model(data):
     X = data[["revenu_mensuel", "age", "historique_defaut", "montant_demande"]]
     Y = data["octroi"]
     
+    X_train, X_test, y_train, y_test = train_test_split(X,Y, test_size=0.2, random_state=42)
+    
     scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
     
     model_octroi = RandomForestClassifier(n_estimators=100, random_state=42)
-    model_octroi.fit(X_scaled, Y)
+    model_octroi.fit(X_train_scaled,y_train)
     
-    return model_octroi, scaler
+    y_pred = model_octroi.predict(X_test_scaled)
+    acc = accuracy_score(y_test, y_pred)
+    
+    return model_octroi, scaler, acc
 
 def prediction_client(model_octroi, scaler, client_input):
     
@@ -71,4 +79,3 @@ def stress_test(model_octroi, scaler, client_input, revenu, montant_demande):
     return stress_factors, stress_results
         
 
- 

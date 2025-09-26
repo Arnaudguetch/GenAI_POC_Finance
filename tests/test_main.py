@@ -51,7 +51,7 @@ def trained_model():
     return model_octroi, scaler, client
 
 def test_train_model_ouput(trained_model):
-    
+   
     model_octroi, scaler, _ = trained_model
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.preprocessing import StandardScaler

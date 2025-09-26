@@ -2,9 +2,11 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "genai_poc_finance"
+        IMAGE_NAME = "genai_app"
         STREAMLIT_CONTAINER = "streamlit_app"
         DATA_HOST_PATH = "${WORKSPACE}/data"
+        
+
     }
 
     stages {
@@ -57,15 +59,19 @@ pipeline {
             steps {
                 script {
                     echo "Lancement des tests unitaires depuis test-branch..."
-                    sh "rm -rf /tmp/test-branch"
-                    sh "git clone -b test-branch https://github.com/Arnaudguetch/GenAI_POC_Finance.git /tmp/test-branch"
-                    sh "ls -l /tmp/test-branch"
                     sh """
-                    docker run --rm \
-                    -v /tmp/test-branch:/source \
-                    -v /tmp/test-branch/data:/data \
-                    ${IMAGE_NAME} \
-                    bash -lc 'if [ -d /source/tests ]; then cd /source && pytest tests/test_main.py --maxfail=1 --disable-warnings -q; else echo "Tests folder not found"; exit 1; fi'
+                        docker build -t genai_poc_finance -f dockerfile/Dockerfile .
+                    """
+                    sh """
+                        rm -rf /tmp/test-branch
+                        git clone -b test-branch https://github.com/Arnaudguetch/GenAI_POC_Finance.git /tmp/test-branch
+                        ls -l /tmp/test-branch
+                        docker run --rm \\
+                            -v /tmp/test-branch:/source \\
+                            -v /tmp/test-branch/data:/data \\
+                            -w /source \\
+                            genai_poc_finance \\
+                            bash -lc 'export PYTHONPATH=/source && pytest tests/test_main.py --maxfail=1 --disable-warnings -q'
                     """
                 }
             }
@@ -76,12 +82,22 @@ pipeline {
                 script {
                     echo "Déploiement Streamlit (démarrage détaché)"
                     sh '''
+                      STREAMLIT_CONTAINER=streamlit_app
+                      IMAGE_NAME=genai_app
+                      HOST_PORT=8501
+
                       docker rm -f ${STREAMLIT_CONTAINER} 2>/dev/null || true
 
-                      docker run -d --name ${STREAMLIT_CONTAINER} -p 8501:8501 \
-                        -v ${WORKSPACE}:/source -v ${WORKSPACE}/data:/data \
-                        ${IMAGE_NAME} \
-                        bash -lc "streamlit run /source/app.py --server.port=8501 --server.address=0.0.0.0"
+                      EXISTING=$(docker ps --filter "publish=$HOST_PORT" --format "{{.ID}}")
+                      if [ ! -z "$EXISTING" ]; then
+                          docker rm -f $EXISTING
+                      fi
+
+                      docker run -d --name ${STREAMLIT_CONTAINER} -p $HOST_PORT:8501 \
+                        -v ${WORKSPACE}/data:/data \
+                        ${IMAGE_NAME} 
+
+                      echo "Streamlit accessible sur le port $HOST_PORT"
                     '''
                 }
             }
@@ -100,3 +116,5 @@ pipeline {
         }
     }
 }
+
+

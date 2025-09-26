@@ -54,10 +54,46 @@ Le but est de faire un **mini tableau de board intéractif** ou :
     |                         - test_main.py
     |                   - Mlflow
     |                   - Requirements
-    |                   - data
+    |                   - data/
+    |                         - backup/
+    |                         - database.db
     |                   - sqlite
 
   > Dans le répo, nous avons 3 branches :
   >   - **Develop-branch :** branche de développement, on y trouvera tout ce qui est code et autres
   >   - **Test-branch :** branche de test, pour tester les différents codes développer au préalable
   >   - **Master :** branche principal ou sera sauvegarder la version finale du POC
+
+#### a-) Diagramme d'utilisation :
+
+```mermaid
+mindmap
+    root((Stack-Techno))
+        Tools
+            Docker
+                Dockerfile.main
+                Dockerfile.app
+                Docker-compose
+            Git/Github
+            Jenkins
+                Jenkinsfile
+            Mlflow
+            Sqlite3
+            Streamlit
+        Languages
+            Python
+            Bash
+            Scikit-learn
+            Sql
+            Grovy
+```  
+#### b-) Etapes pour lancer le projet
+
+> Veuillez cliquer sur ce [**document**](https://github.com/Arnaudguetch/GenAI_POC_Finance/wiki) 
+ pour suivre les étapes de démarrage et visualisation du projet
+#### c-) Références : 
+
+> Je me suis inspiré à partir de ces **documents**, des **vidéos youtube** et mes connaisances sur la finance acquis lors de mon passage à travers un stage à la **Société Générale**; Tout ceux-ci m'ont permis de réaliser ce POC. Ces différents documents sont reférencés à travers ces liens : 
+> 1. [Recommandations pour la détection et le traitement des banques fragiles](https://www.bis.org/bcbs/publ/d330_fr.pdf?utm_source=chatgpt.com).
+> 2. [Études / rapports sur les déterminants de l’octroi de crédits bancaires (ratios, indicateurs)](https://scispace.com/pdf/les-determinants-d-octroi-de-credits-bancaires-aux-1n9bdyyhgh.pdf?utm_source=chatgpt.com).
+> 3. [Saine gestion des risques de blanchiment de capitaux et de financement du terrorisme](https://www.bis.org/publ/bcbs275_fr.pdf?utm_source=chatgpt.com).

@@ -18,6 +18,7 @@ services:
       - ./dockerfile:/dockerfile
       - ./source:/source
       - ./data:/data
+      - ./logs:/logs
     restart: always
 
   ml:
@@ -28,6 +29,7 @@ services:
     volumes:
       - ./source:/source
       - ./data:/data
+      - ./logs:/logs
     env_file:
       - ./.env
     environment:
@@ -44,6 +46,7 @@ services:
     volumes:
       - ./source:/source
       - ./data:/data
+      - ./logs:/logs
     env_file:
       - ./.env
     environment:
@@ -54,14 +57,42 @@ services:
     image: ghcr.io/mlflow/mlflow
     container_name: GenAI_MLFLOW
     ports:
-      - "8082:8080"
+      - "8083:8082"
     volumes:
-      - ./Mlflow:/mlflow
+      - ./Mlflow/mlruns:/mlruns   
+      - ./logs:/logs
+    environment:
+      - MLFLOW_TRACKING_URI=sqlite:///mlflow.db
+    command: >
+      mlflow server
+      --backend-store-uri sqlite:///mlflow.db
+      --default-artifact-root /mlruns
+      --host 0.0.0.0
+      --port 8082
     restart: always
 
+  trainer:
+    build:
+      context: .
+      dockerfile: dockerfile/Dockerfile.train
+    container_name: GenAI_Trainer
+    depends_on:
+      - mlflow
+    volumes:
+      - ./Mlflow:/app/mlruns        
+      - ./source:/app/source        
+      - ./logs:/logs
+    env_file:
+      - ./.env
+    environment:
+      - DATABASE_PATH=/data/database.db
+      - MLFLOW_TRACKING_URI=http://mlflow:8082
+      - MLFLOW_ARTIFACT_ROOT=/mlruns
+    restart: "no"
   data:
     image: alpine
     container_name: GenAI_Data
     volumes:
       - ./data:/data
+      - ./logs:/logs
     command: tail -f /dev/null

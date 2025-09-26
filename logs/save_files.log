@@ -1,0 +1,7 @@
+[SAVE] clients.csv → /data/backup/clients.csv_26-09-2025
+
+======= Sauvegarde terminée dans : /data/backup ========
+Fichiers copiés : ['clients.csv']
+
+[DELETE] clients.csv supprimé de /data
+[DELETE] Total fichiers supprimés : 1
