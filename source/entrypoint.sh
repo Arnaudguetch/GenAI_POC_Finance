@@ -4,6 +4,8 @@ set -e
 
 set -x
 
+mkdir -p /logs
+
 echo "Lancement des scripts en parallèle..."
 
 echo "Lancement du script ML (main.py)..."
