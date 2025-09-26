@@ -1,5 +1,5 @@
 
-from main import generate_client_data, save_data, train_model, prediction_client, stress_test
+from source.main import generate_client_data, save_data, train_model, prediction_client, stress_test
 import pandas as pd
 import numpy as np
 import mlflow

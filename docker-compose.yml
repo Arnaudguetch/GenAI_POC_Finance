@@ -79,16 +79,15 @@ services:
     depends_on:
       - mlflow
     volumes:
-      - ./Mlflow:/app/mlruns      
-      - ./source:/app/source
+      - ./Mlflow:/app/mlruns        
+      - ./source:/app/source        
       - ./logs:/logs
     env_file:
       - ./.env
     environment:
       - DATABASE_PATH=/data/database.db
       - MLFLOW_TRACKING_URI=http://mlflow:8082
-      - MLFLOW_ARTIFACT_ROOT=/app/mlruns    
-    command: ["python", "/app/source/train_mlflow.py"]
+      - MLFLOW_ARTIFACT_ROOT=/app/mlruns
     restart: "no"
   data:
     image: alpine

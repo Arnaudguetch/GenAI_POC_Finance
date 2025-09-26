@@ -1,7 +1,7 @@
 
 FROM python:3.11-slim
 
-WORKDIR /source
+WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential curl git && \
@@ -11,8 +11,9 @@ COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-COPY Mlflow/train_mlflow.py /app/train_mlflow.py
+COPY Mlflow/train_mlflow.py .
 
 ENV MLFLOW_TRACKING_URI=http://mlflow:8082
 
-CMD ["python", "/app/train_mlflow.py"]
+CMD ["python", "train_mlflow.py"]
+
