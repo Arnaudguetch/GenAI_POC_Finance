@@ -60,6 +60,9 @@ pipeline {
                 script {
                     echo "Lancement des tests unitaires depuis test-branch..."
                     sh """
+                        docker build -t genai_poc_finance -f dockerfile/Dockerfile .
+                    """
+                    sh """
                         rm -rf /tmp/test-branch
                         git clone -b test-branch https://github.com/Arnaudguetch/GenAI_POC_Finance.git /tmp/test-branch
                         ls -l /tmp/test-branch
