@@ -8,7 +8,7 @@ def load_file(path):
 
     file = [ ]
     for files in os.listdir(path_src):
-        if os.path.isfile(os.path.join(path_src, files)):
+        if os.path.isfile(os.path.join(path_src, files)) and files.lower().endswith(".csv"):
             file.append(files)
      
     if not file:
@@ -16,14 +16,12 @@ def load_file(path):
 
     dernier_fichier = max(file, key=lambda files: os.path.getmtime(os.path.join(path_src, files)))
 
-    last_file = dernier_fichier.split("_")[0]
-
-    return last_file
+    return dernier_fichier
 
 def connect_data(filename):
     
     table_name = os.path.splitext(filename)[0]
-    db_name = os.path.splitext(filename)[0] + ".db"
+    db_name = table_name + ".db"
     
     csv_path = os.path.join(path_src, filename)
     with open(csv_path, "r", encoding="utf-8") as f:
