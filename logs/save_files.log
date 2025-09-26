@@ -1,5 +1,1 @@
-
-======= Sauvegarde terminée dans le dossier : /data/backup ========
-Fichiers copiés : []
-
-Aucun fichier à supprimer.
+['backup', 'clients.db', 'database.py', 'save_files.py']
