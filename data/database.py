@@ -2,7 +2,7 @@ from sqlite3 import connect
 import os 
 import csv 
 
-path_src = "./backup/"
+path_src = "./data/backup"
 
 def load_file(path):
 
