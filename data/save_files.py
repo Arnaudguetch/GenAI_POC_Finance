@@ -27,7 +27,7 @@ def save_file(src, dst):
     return dst, saved_files
 
 source_path = "./"
-backup_dir = "./backup/"               
+backup_dir = "/data/backup/"               
 backup_path, copied_files = save_file(source_path, backup_dir)
 
 print(f"\n ======= Sauvegarde terminée dans le dossier : {backup_path} ========")
