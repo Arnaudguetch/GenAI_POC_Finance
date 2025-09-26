@@ -36,7 +36,7 @@ def test_save_data(tmp_path):
     save_data(data, path=file_path)
     assert os.path.exists(file_path)
  
-@pytest.fixture(scope="module")           
+@pytest.fixture(scope="source.main")           
 def trained_model():
     
     data = generate_client_data(200)
