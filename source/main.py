@@ -28,7 +28,7 @@ def save_data(data, path="/data/clients.csv"):
     
     os.makedirs(os.path.dirname(path), exist_ok=True)
     data.to_csv(path, index=False)
-    
+   
     return path
 
 def train_model(data):
