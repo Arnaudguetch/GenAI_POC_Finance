@@ -19,7 +19,7 @@ RUN pip install --upgrade pip && \
 
 COPY source/ . 
 
-COPY backup/ . 
+COPY data/ . 
 
 COPY source/entrypoint.sh /source/entrypoint.sh
 RUN chmod +x /source/entrypoint.sh 
