@@ -53,7 +53,7 @@ def delete_csv_files(src=SOURCE_DIR, files_to_delete=None):
 
 
 backup_path, copied_files = save_csv_files()
-print(f"\n======= Sauvegarde terminée dans le dossier : {backup_path} ========")
+print(f"\n======= Sauvegarde terminée dans le dossier {backup_path} ========")
 print("Fichiers copiés :", copied_files)
 print()
 
