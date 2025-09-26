@@ -1,8 +1,7 @@
 Traceback (most recent call last):
-  File "/data/database.py", line 60, in <module>
-    db = connect_data(data)
-         ^^^^^^^^^^^^^^^^^^
-  File "/data/database.py", line 29, in connect_data
-    with open(csv_path, "r", encoding="utf-8") as f:
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: '/data/backup/clients.csv'
+  File "/data/database.py", line 57, in <module>
+    data = load_file(path_src)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/data/database.py", line 15, in load_file
+    raise FileNotFoundError("Error aucun fichier trouvé dans le dossier backup")
+FileNotFoundError: Error aucun fichier trouvé dans le dossier backup
