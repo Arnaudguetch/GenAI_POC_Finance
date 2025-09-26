@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /source
+RUN mkdir -p /logs /data
 
 COPY requirements.txt . 
 RUN pip install --upgrade pip && \
@@ -19,9 +20,6 @@ RUN pip install --upgrade pip && \
 COPY source/ . 
 
 COPY backup/ . 
-
-RUN mkdir -p /logs
-
 
 COPY source/entrypoint.sh /source/entrypoint.sh
 RUN chmod +x /source/entrypoint.sh 
