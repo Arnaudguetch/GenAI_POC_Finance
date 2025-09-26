@@ -2,19 +2,28 @@ from sqlite3 import connect
 import os 
 import csv 
 
-path_src = "/data/backup"
+if os.environ.get("DOCKER"):
+    path_src = "/data/backup"
+else:
+    path_src = os.path.join(os.path.dirname(__file__), "backup")
+
+"""print("=== Debug database.py ===")
+print("Contenu de /data/backup :")
+print(os.listdir(path_src) if os.path.exists(path_src) else "Dossier inexistant")
+print("=========================")"""
+
 
 def load_file(path):
 
     file = [ ]
-    for files in os.listdir(path_src):
-        if os.path.isfile(os.path.join(path_src, files)) and files.lower().endswith(".csv"):
+    for files in os.listdir(path):
+        if os.path.isfile(os.path.join(path, files)):
             file.append(files)
-     
+    
     if not file:
         raise FileNotFoundError("Error aucun fichier trouvé dans le dossier backup")
 
-    dernier_fichier = max(file, key=lambda files: os.path.getmtime(os.path.join(path_src, files)))
+    dernier_fichier = max(file, key=lambda files: os.path.getmtime(os.path.join(path, files)))
 
     return dernier_fichier
 
