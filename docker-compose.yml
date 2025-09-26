@@ -80,7 +80,7 @@ services:
     depends_on:
       - mlflow
     volumes:
-      - ./Mlflow:/train/Mlflow
+      - ./Mlflow:/train/mlflow_artifacts
       - ./logs:/logs
     env_file:
       - ./.env
