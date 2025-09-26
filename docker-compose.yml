@@ -53,14 +53,23 @@ services:
       - DATABASE_PATH=/data/database.db
     restart: always
 
+  
   mlflow:
     image: ghcr.io/mlflow/mlflow
     container_name: GenAI_MLFLOW
     ports:
       - "8083:8082"
     volumes:
-      - ./Mlflow:/mlflow
+      - ./Mlflow:/mlruns       
       - ./logs:/logs
+    environment:
+      MLFLOW_TRACKING_URI: sqlite:///mlflow.db  
+    command: >
+      mlflow server
+      --backend-store-uri sqlite:///mlflow.db
+      --default-artifact-root /mlruns
+      --host 0.0.0.0
+      --port 8082
     restart: always
 
   trainer:
@@ -80,7 +89,6 @@ services:
       - MLFLOW_TRACKING_URI=http://mlflow:8082
     command: ["python", "/train/train_mlflow.py"]
     restart: "no"
-
   data:
     image: alpine
     container_name: GenAI_Data

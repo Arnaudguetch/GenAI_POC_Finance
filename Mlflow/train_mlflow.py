@@ -47,3 +47,5 @@ if __name__ == "__main__":
         print(f"Accuracy : {accuracy:.2f}")
         print(f"Probabilité octroi : {proba:.2f}")
         print("Stress test :", dict(zip(stress_factors, stress_results)))
+        
+        
