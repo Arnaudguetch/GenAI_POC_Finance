@@ -1,5 +1,5 @@
 
-from source.main import generate_client_data, save_data, train_model, prediction_client, stress_test
+from main import generate_client_data, save_data, train_model, prediction_client, stress_test
 import pandas as pd
 import numpy as np
 import mlflow
@@ -8,7 +8,9 @@ import mlflow.sklearn
 
 if __name__ == "__main__":
 
+    mlflow.set_tracking_uri("http://mlflow:8082")
     mlflow.set_experiment("Credit_Octroi_Model")
+
 
     with mlflow.start_run(run_name="RandomForest_Octroi"):
         

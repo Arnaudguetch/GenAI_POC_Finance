@@ -59,10 +59,10 @@ services:
     ports:
       - "8083:8082"
     volumes:
-      - ./Mlflow:/mlruns       
+      - ./Mlflow:/mlruns   
       - ./logs:/logs
     environment:
-      - MLFLOW_TRACKING_URI=sqlite:///mlflow.db  
+      - MLFLOW_TRACKING_URI=sqlite:///mlflow.db
     command: >
       mlflow server
       --backend-store-uri sqlite:///mlflow.db
@@ -79,16 +79,17 @@ services:
     depends_on:
       - mlflow
     volumes:
-      - ./Mlflow:/app/mlflow_artifacts   
+      - ./Mlflow:/app/mlruns      
+      - ./source:/app/source
       - ./logs:/logs
     env_file:
       - ./.env
     environment:
       - DATABASE_PATH=/data/database.db
       - MLFLOW_TRACKING_URI=http://mlflow:8082
-    command: ["python", "/app/train_mlflow.py"]  
+      - MLFLOW_ARTIFACT_ROOT=/app/mlruns    
+    command: ["python", "/app/source/train_mlflow.py"]
     restart: "no"
-
   data:
     image: alpine
     container_name: GenAI_Data
