@@ -5,9 +5,9 @@ set -x
 mkdir -p /logs
 
 echo "=== Lancement de main.py (ML) ==="
-python3 ./source/main.py > /logs/main.log 2>&1
+python3 /source/main.py > /logs/main.log 2>&1
 
-CSV_FILE="./data/clients.csv"
+CSV_FILE="/data/clients.csv"
 TIMEOUT=30   
 ELAPSED=0
 
@@ -21,10 +21,10 @@ while [ ! -f "$CSV_FILE" ]; do
 done
 
 echo "=== Lancement de save_files.py (sauvegarde) ==="
-python3 ./data/save_files.py > /logs/save_files.log 2>&1
+python3 /data/save_files.py > /logs/save_files.log 2>&1
 
 echo "=== Lancement de database.py ==="
-python3 ./data/database.py > /logs/database.log 2>&1
+python3 /data/database.py > /logs/database.log 2>&1
 
 echo "=== Tous les scripts ont été exécutés avec succès ==="
 
