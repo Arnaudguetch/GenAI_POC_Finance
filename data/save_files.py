@@ -41,7 +41,7 @@ def delete_csv_files(path_src):
         print(f"Total fichiers supprimés : {len(deleted_files)}")
 
 
-source_path = "./"
+source_path = "./data/"
 backup_dir = "./data/backup"
 
 backup_path, copied_files = save_csv_files(source_path, backup_dir)
