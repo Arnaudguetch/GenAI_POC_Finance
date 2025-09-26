@@ -1,8 +1,8 @@
 Traceback (most recent call last):
-  File "/data/database.py", line 59, in <module>
-    data = load_file(path_src)
-           ^^^^^^^^^^^^^^^^^^^
-  File "/data/database.py", line 10, in load_file
-    for files in os.listdir(path_src):
-                 ^^^^^^^^^^^^^^^^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: './data/backup'
+  File "/data/database.py", line 60, in <module>
+    db = connect_data(data)
+         ^^^^^^^^^^^^^^^^^^
+  File "/data/database.py", line 29, in connect_data
+    with open(filename, "r", encoding="utf-8") as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'clients.csv'

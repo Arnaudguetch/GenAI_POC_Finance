@@ -2,8 +2,11 @@ import os
 from datetime import date
 import shutil 
 
+SOURCE_DIR = "/data"         
+BACKUP_DIR = "/data/backup"
 
-def save_csv_files(src="/data", dst="/data/backup"):
+
+def save_csv_files(src=SOURCE_DIR, dst=BACKUP_DIR):
     
     
     if not os.path.exists(src):
@@ -11,8 +14,8 @@ def save_csv_files(src="/data", dst="/data/backup"):
         return dst, []
 
     if not os.path.exists(dst):
-        print(f"Erreur : le dossier de backup {dst} n'existe pas.")
-        return dst, []
+        os.makedirs(dst)
+        print(f"Dossier de backup {dst} créé.")
 
     current_date = date.today().strftime("%d-%m-%Y")
     saved_files = []
@@ -22,26 +25,19 @@ def save_csv_files(src="/data", dst="/data/backup"):
             src_path = os.path.join(src, file_name)
             dest_name = f"{file_name}_{current_date}"
             dst_path = os.path.join(dst, dest_name)
-            try:
-                shutil.copy2(src_path, dst_path)
-                print(f"Le fichier {file_name} a été copié dans {dst}")
-                saved_files.append(file_name)
-            except Exception as e:
-                print(f"Impossible de copier {file_name} : {e}")
+            shutil.copy2(src_path, dst_path)
+            print(f"Le fichier {file_name} a été copié dans {dst}")
+            saved_files.append(file_name)
 
     return dst, saved_files
 
 
-
-def delete_csv_files(src="/data", files_to_delete=None):
-   
-   
+def delete_csv_files(src=SOURCE_DIR, files_to_delete=None):
     if not os.path.exists(src):
         print(f"Erreur : le dossier source {src} n'existe pas.")
         return
 
     deleted_files = []
-
     for file_name in files_to_delete or []:
         file_path = os.path.join(src, file_name)
         if os.path.isfile(file_path):
@@ -56,15 +52,12 @@ def delete_csv_files(src="/data", files_to_delete=None):
         
 
 
-source_path = "/data"         
-backup_dir = "/data/backup" 
-
-backup_path, copied_files = save_csv_files(source_path, backup_dir)
-
+backup_path, copied_files = save_csv_files()
 print(f"\n======= Sauvegarde terminée dans le dossier : {backup_path} ========")
 print("Fichiers copiés :", copied_files)
+print()
 
-delete_csv_files(source_path, copied_files)
+delete_csv_files(files_to_delete=copied_files)
 
     
 
