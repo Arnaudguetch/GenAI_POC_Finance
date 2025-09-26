@@ -28,3 +28,5 @@ python3 /data/database.py > /logs/database.log 2>&1
 
 echo "=== Tous les scripts ont été exécutés avec succès ==="
 
+tail -f /dev/null
+
