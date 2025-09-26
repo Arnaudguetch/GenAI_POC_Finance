@@ -5,17 +5,27 @@ pipeline {
         IMAGE_NAME = "genai_app"
         STREAMLIT_CONTAINER = "streamlit_app"
         DATA_HOST_PATH = "${WORKSPACE}/data"
-
+        LOGS_HOST_PATH = "${WORKSPACE}/logs"
     }
 
     stages {
+
         stage("Checkout develop-branch") {
             steps {
                 script {
                     echo "Checkout develop-branch"
                     sh '''
-                      git fetch origin develop-branch
-                      git checkout -B develop-branch origin/develop-branch
+                    
+                        if [ -f ${WORKSPACE}/.git/index.lock ]; then
+                            echo "Suppression du fichier index.lock"
+                            rm -f ${WORKSPACE}/.git/index.lock
+                        fi
+                        
+                        git reset --hard || true
+                        git clean -fdx || true
+                        # Checkout de la branche develop-branch
+                        git fetch origin develop-branch
+                        git checkout -B develop-branch origin/develop-branch
                     '''
                 }
             }
@@ -24,7 +34,7 @@ pipeline {
         stage("Build Docker Image") {
             steps {
                 script {
-                    echo "Build image Docker (contexte = racine)"
+                    echo "Build de l'image Docker à partir de Dockerfile"
                     sh 'docker build -t ${IMAGE_NAME} -f dockerfile/Dockerfile .'
                 }
             }
@@ -33,10 +43,14 @@ pipeline {
         stage("Run main.py (ML)") {
             steps {
                 script {
-                    echo "Exécution de main.py dans un conteneur (avec /data monté)"
+                    echo "Exécution de main.py dans un conteneur"
                     sh '''
-                      mkdir -p ${WORKSPACE}/data
-                      docker run --rm -v ${WORKSPACE}/data:/data ${IMAGE_NAME} python3 /source/main.py
+                        mkdir -p ${DATA_HOST_PATH}
+                        docker run --rm \
+                            -v ${DATA_HOST_PATH}:/data \
+                            -v ${LOGS_HOST_PATH}:/logs \
+                            ${IMAGE_NAME} \
+                            python3 /source/main.py
                     '''
                 }
             }
@@ -47,21 +61,25 @@ pipeline {
                 script {
                     echo "Checkout test-branch"
                     sh '''
-                      git fetch origin test-branch
-                      git checkout -B test-branch origin/test-branch
+                        if [ -f ${WORKSPACE}/.git/index.lock ]; then
+                            rm -f ${WORKSPACE}/.git/index.lock
+                        fi
+                        git reset --hard || true
+                        git clean -fdx || true
+                        git fetch origin test-branch
+                        git checkout -B test-branch origin/test-branch
                     '''
                 }
             }
         }
 
-        stage("Run Unit Tests (using test-branch code)") {
+        stage("Run Unit Tests (test-branch)") {
             steps {
                 script {
-                    echo "Lancement des tests unitaires depuis test-branch..."
+                    echo "Lancement des tests unitaires depuis test-branch"
                     sh """
                         rm -rf /tmp/test-branch
                         git clone -b test-branch https://github.com/Arnaudguetch/GenAI_POC_Finance.git /tmp/test-branch
-                        ls -l /tmp/test-branch
                         docker run --rm \\
                             -v /tmp/test-branch:/source \\
                             -v /tmp/test-branch/data:/data \\
@@ -76,24 +94,21 @@ pipeline {
         stage("Deploy Streamlit App (detached)") {
             steps {
                 script {
-                    echo "Déploiement Streamlit (démarrage détaché)"
+                    echo "Déploiement de l'application Streamlit"
                     sh '''
-                      STREAMLIT_CONTAINER=streamlit_app
-                      IMAGE_NAME=genai_app
-                      HOST_PORT=8501
+                        docker rm -f ${STREAMLIT_CONTAINER} 2>/dev/null || true
 
-                      docker rm -f ${STREAMLIT_CONTAINER} 2>/dev/null || true
+                        EXISTING=$(docker ps --filter "publish=8501" --format "{{.ID}}")
+                        if [ ! -z "$EXISTING" ]; then
+                            docker rm -f $EXISTING
+                        fi
 
-                      EXISTING=$(docker ps --filter "publish=$HOST_PORT" --format "{{.ID}}")
-                      if [ ! -z "$EXISTING" ]; then
-                          docker rm -f $EXISTING
-                      fi
+                        docker run -d --name ${STREAMLIT_CONTAINER} -p 8501:8501 \
+                            -v ${DATA_HOST_PATH}:/data \
+                            -v ${LOGS_HOST_PATH}:/logs \
+                            ${IMAGE_NAME}
 
-                      docker run -d --name ${STREAMLIT_CONTAINER} -p $HOST_PORT:8501 \
-                        -v ${WORKSPACE}/data:/data \
-                        ${IMAGE_NAME} 
-
-                      echo "Streamlit accessible sur le port $HOST_PORT"
+                        echo "Streamlit accessible sur le port 8501"
                     '''
                 }
             }
@@ -105,10 +120,10 @@ pipeline {
             echo "======== Pipeline terminé ========"
         }
         success {
-            echo "======== Pipeline exécuté avec succès! ========="
+            echo "======== Pipeline exécuté avec succès ! ========="
         }
         failure {
-            echo "======== Pipeline échoué! ========="
+            echo "======== Pipeline échoué ! ========="
         }
     }
 }
