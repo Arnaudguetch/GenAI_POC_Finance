@@ -26,7 +26,7 @@ def connect_data(filename):
     db_name = os.path.splitext(filename)[0] + ".db"
     
     csv_path = os.path.join(path_src, filename)
-    with open(filename, "r", encoding="utf-8") as f:
+    with open(csv_path, "r", encoding="utf-8") as f:
         reader = csv.reader(f)
         headers = next(reader)
         rows = list(reader)
@@ -60,3 +60,4 @@ data = load_file(path_src)
 db = connect_data(data)
 
 print(f" ======== Base de Données {db} prete ======== ")
+
