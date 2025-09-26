@@ -1,4 +1,14 @@
-FROM python:3.11-slim 
+FROM python:3.11-slim
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    build-essential \
+    wget \
+    procps \
+    file \
+    sudo \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /source
 
@@ -9,6 +19,8 @@ RUN pip install --upgrade pip && \
 COPY source/ . 
 
 COPY backup/ . 
+
+RUN mkdir -p /logs
 
 
 COPY source/entrypoint.sh /source/entrypoint.sh
