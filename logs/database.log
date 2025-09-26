@@ -3,6 +3,6 @@ Traceback (most recent call last):
     db = connect_data(data)
          ^^^^^^^^^^^^^^^^^^
   File "/data/database.py", line 29, in connect_data
-    with open(filename, "r", encoding="utf-8") as f:
+    with open(csv_path, "r", encoding="utf-8") as f:
          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: 'clients.csv'
+FileNotFoundError: [Errno 2] No such file or directory: '/data/backup/clients.csv'
